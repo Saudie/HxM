@@ -1,0 +1,213 @@
+<html>
+<head>
+<title>Home.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(128,128,128); }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+Home.java</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">package </span><span class="s1">com.example.so.vibrationcoeur</span><span class="s0">;</span><span class="s1"> 
+ 
+</span><span class="s0">import </span><span class="s1">android.content.Context</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">android.media.MediaPlayer</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">android.os.Handler</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">android.support.v7.app.AppCompatActivity</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">android.os.Bundle</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">android.view.MotionEvent</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">android.view.View</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">android.widget.Button</span><span class="s0">;</span><span class="s1"> 
+ 
+</span><span class="s0">import </span><span class="s1">java.util.Random</span><span class="s0">;</span><span class="s1"> 
+ 
+</span><span class="s0">public class </span><span class="s1">Home </span><span class="s0">extends </span><span class="s1">AppCompatActivity { 
+ 
+    Context context = </span><span class="s0">this;</span><span class="s1"> 
+ 
+    </span><span class="s0">private final </span><span class="s1">Random mRandom = </span><span class="s0">new </span><span class="s1">Random()</span><span class="s0">;</span><span class="s1"> 
+    </span><span class="s0">private final </span><span class="s1">Handler mHandler = </span><span class="s0">new </span><span class="s1">Handler()</span><span class="s0">;</span><span class="s1"> 
+ 
+    </span><span class="s0">private </span><span class="s1">MediaPlayer mediaPlayer</span><span class="s0">;</span><span class="s1"> 
+    </span><span class="s0">private </span><span class="s1">MediaPlayer firstBeatPlayer</span><span class="s0">;</span><span class="s1"> 
+    </span><span class="s0">private </span><span class="s1">MediaPlayer secondBeatPlayer</span><span class="s0">;</span><span class="s1"> 
+ 
+    </span><span class="s0">private boolean </span><span class="s1">keepPlaying = </span><span class="s0">false;</span><span class="s1"> 
+    </span><span class="s0">private boolean </span><span class="s1">firstBeat = </span><span class="s0">true;</span><span class="s1"> 
+    </span><span class="s0">private boolean </span><span class="s1">soundBeginning = </span><span class="s0">true;</span><span class="s1"> 
+    </span><span class="s0">private boolean </span><span class="s1">backToNormal = </span><span class="s0">false;</span><span class="s1"> 
+    </span><span class="s0">private boolean </span><span class="s1">dieSlowly = </span><span class="s0">false;</span><span class="s1"> 
+    </span><span class="s0">private boolean </span><span class="s1">wakeUpSlowly = </span><span class="s0">true;</span><span class="s1"> 
+ 
+    </span><span class="s0">private int </span><span class="s1">delayMillis</span><span class="s0">;</span><span class="s1"> 
+    </span><span class="s0">private int </span><span class="s1">currentDelay = </span><span class="s2">1000</span><span class="s0">;</span><span class="s1"> 
+    </span><span class="s0">private int </span><span class="s1">consecutiveBeats = </span><span class="s2">0</span><span class="s0">;</span><span class="s1"> 
+    </span><span class="s0">private int </span><span class="s1">consecutiveExtreme = </span><span class="s2">1</span><span class="s0">;</span><span class="s1"> 
+    </span><span class="s0">private boolean </span><span class="s1">frequencyIncreasing = </span><span class="s0">false;</span><span class="s1"> 
+ 
+ 
+    @Override 
+    </span><span class="s0">protected void </span><span class="s1">onCreate(Bundle savedInstanceState) { 
+        </span><span class="s0">super</span><span class="s1">.onCreate(savedInstanceState)</span><span class="s0">;</span><span class="s1"> 
+        setContentView(R.layout.home_layout)</span><span class="s0">;</span><span class="s1"> 
+ 
+        Button button = findViewById(R.id.heartButton)</span><span class="s0">;</span><span class="s1"> 
+ 
+        button.setOnTouchListener(</span><span class="s0">new </span><span class="s1">View.OnTouchListener() { 
+            </span><span class="s0">public boolean </span><span class="s1">onTouch(View v</span><span class="s0">, </span><span class="s1">MotionEvent event) { 
+ 
+                </span><span class="s0">if</span><span class="s1">(event.getAction() == MotionEvent.ACTION_DOWN){ 
+                    soundBeginning = </span><span class="s0">false;</span><span class="s1"> 
+                    keepPlaying = </span><span class="s0">true;</span><span class="s1"> 
+                    firstBeat = </span><span class="s0">true;</span><span class="s1"> 
+                    wakeUpSlowly = </span><span class="s0">true;</span><span class="s1"> 
+ 
+                    currentDelay = </span><span class="s2">1200</span><span class="s0">;</span><span class="s1"> 
+                } 
+ 
+                </span><span class="s0">if</span><span class="s1">(event.getAction() == MotionEvent.ACTION_UP){ 
+                    dieSlowly = </span><span class="s0">true;</span><span class="s1"> 
+                } 
+ 
+                </span><span class="s0">return false;</span><span class="s1"> 
+            } 
+        })</span><span class="s0">;</span><span class="s1"> 
+ 
+        firstBeatPlayer = MediaPlayer.create(</span><span class="s0">this, </span><span class="s1">R.raw.beat1)</span><span class="s0">;</span><span class="s1"> 
+        secondBeatPlayer = MediaPlayer.create(</span><span class="s0">this, </span><span class="s1">R.raw.beat2)</span><span class="s0">;</span><span class="s1"> 
+ 
+        mediaPlayer = firstBeatPlayer</span><span class="s0">;</span><span class="s1"> 
+ 
+        playMySound()</span><span class="s0">;</span><span class="s1"> 
+    } 
+ 
+    </span><span class="s0">private void </span><span class="s1">playMySound() { 
+        </span><span class="s3">// Randomly change frequency</span><span class="s1"> 
+        </span><span class="s0">int </span><span class="s1">frequencyToAdd</span><span class="s0">;</span><span class="s1"> 
+ 
+        </span><span class="s0">if </span><span class="s1">(keepPlaying) { 
+            </span><span class="s0">if </span><span class="s1">(firstBeat) { 
+                mediaPlayer = firstBeatPlayer</span><span class="s0">;</span><span class="s1"> 
+                delayMillis = currentDelay</span><span class="s0">;</span><span class="s1"> 
+ 
+                </span><span class="s0">if </span><span class="s1">(soundBeginning) { 
+                    System.out.println(</span><span class="s4">&quot;First time, setup&quot;</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+ 
+                    frequencyIncreasing = (mRandom.nextInt(</span><span class="s2">1</span><span class="s1">) &gt; </span><span class="s2">0</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+                    frequencyToAdd = frequencyIncreasing ? </span><span class="s2">40 </span><span class="s1">: -</span><span class="s2">40</span><span class="s0">;</span><span class="s1"> 
+ 
+                    currentDelay = </span><span class="s2">800</span><span class="s0">;</span><span class="s1"> 
+                    consecutiveBeats = </span><span class="s2">0</span><span class="s0">;</span><span class="s1"> 
+                    consecutiveExtreme = </span><span class="s2">1</span><span class="s0">;</span><span class="s1"> 
+ 
+                    soundBeginning = </span><span class="s0">false;</span><span class="s1"> 
+                } 
+                </span><span class="s0">else if </span><span class="s1">(wakeUpSlowly) { 
+                    System.out.println(</span><span class="s4">&quot;Wake up slowly&quot;</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+                    frequencyToAdd = </span><span class="s2">160</span><span class="s0">;</span><span class="s1"> 
+ 
+                    </span><span class="s0">if </span><span class="s1">(currentDelay &gt;= </span><span class="s2">960</span><span class="s1">) { 
+                        wakeUpSlowly = </span><span class="s0">false;</span><span class="s1"> 
+                        soundBeginning = </span><span class="s0">true;</span><span class="s1"> 
+                    } 
+                } 
+                </span><span class="s0">else if </span><span class="s1">(dieSlowly) { 
+                    System.out.println(</span><span class="s4">&quot;Die slowly&quot;</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+                    frequencyToAdd = </span><span class="s2">160</span><span class="s0">;</span><span class="s1"> 
+ 
+                    </span><span class="s0">if </span><span class="s1">(currentDelay &gt;= </span><span class="s2">1400</span><span class="s1">) { 
+                        keepPlaying = </span><span class="s0">false;</span><span class="s1"> 
+                        dieSlowly = </span><span class="s0">false;</span><span class="s1"> 
+                    } 
+                } 
+                </span><span class="s0">else </span><span class="s1">{ 
+                    </span><span class="s0">if </span><span class="s1">(backToNormal) { 
+                        System.out.println(</span><span class="s4">&quot;Back to normal, frequency : &quot; </span><span class="s1">+ currentDelay)</span><span class="s0">;</span><span class="s1"> 
+ 
+                        </span><span class="s0">if </span><span class="s1">(currentDelay == </span><span class="s2">800</span><span class="s1">) { 
+                            </span><span class="s0">int </span><span class="s1">randomChanger = mRandom.nextInt(</span><span class="s2">1</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+ 
+                            System.out.println(</span><span class="s4">&quot;Compare randomChanger (&quot; </span><span class="s1">+ randomChanger + </span><span class="s4">&quot;) to consecutiveExtreme (&quot; </span><span class="s1">+ consecutiveExtreme + </span><span class="s4">&quot;)&quot;</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+ 
+                            </span><span class="s0">if </span><span class="s1">(consecutiveExtreme &gt;= randomChanger) { 
+                                </span><span class="s3">// 50% to change the first time, always change the second time</span><span class="s1"> 
+                                frequencyIncreasing = !frequencyIncreasing</span><span class="s0">;</span><span class="s1"> 
+                                consecutiveExtreme = </span><span class="s2">1</span><span class="s0">;</span><span class="s1"> 
+ 
+                                System.out.println(</span><span class="s4">&quot;Revert&quot;</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+                            } 
+                            </span><span class="s0">else </span><span class="s1">{ 
+                                System.out.println(</span><span class="s4">&quot;Continue&quot;</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+                                consecutiveExtreme++</span><span class="s0">;</span><span class="s1"> 
+                            } 
+ 
+                            consecutiveBeats = </span><span class="s2">0</span><span class="s0">;</span><span class="s1"> 
+                            backToNormal = </span><span class="s0">false;</span><span class="s1"> 
+ 
+                            frequencyToAdd = frequencyIncreasing ? -</span><span class="s2">40 </span><span class="s1">: -</span><span class="s2">40</span><span class="s0">;</span><span class="s1"> 
+                        } 
+                        </span><span class="s0">else </span><span class="s1">{ 
+                            System.out.println(</span><span class="s4">&quot;Go back to 1000&quot;</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+                            frequencyToAdd = currentDelay &lt; </span><span class="s2">800 </span><span class="s1">? </span><span class="s2">40 </span><span class="s1">: -</span><span class="s2">40</span><span class="s0">;</span><span class="s1"> 
+                        } 
+                    } 
+                    </span><span class="s0">else </span><span class="s1">{ 
+                        </span><span class="s0">int </span><span class="s1">randomChanger = mRandom.nextInt(</span><span class="s2">20</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+ 
+                        System.out.println(</span><span class="s4">&quot;Compare randomChanger (&quot; </span><span class="s1">+ randomChanger + </span><span class="s4">&quot;) to consecutiveBeats (&quot; </span><span class="s1">+ consecutiveBeats + </span><span class="s4">&quot;)&quot;</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+ 
+                        </span><span class="s0">if </span><span class="s1">(consecutiveBeats &gt; randomChanger) { 
+                            System.out.println(</span><span class="s4">&quot;Change extreme, back to normal&quot;</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+ 
+                            backToNormal = </span><span class="s0">true;</span><span class="s1"> 
+                            frequencyToAdd = currentDelay &lt; </span><span class="s2">800 </span><span class="s1">? </span><span class="s2">40 </span><span class="s1">: -</span><span class="s2">40</span><span class="s0">;</span><span class="s1"> 
+                        } 
+                        </span><span class="s0">else </span><span class="s1">{ 
+                            System.out.println(</span><span class="s4">&quot;Continue into the extreme&quot;</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+                            frequencyToAdd = frequencyIncreasing ? </span><span class="s2">40 </span><span class="s1">: -</span><span class="s2">40</span><span class="s0">;</span><span class="s1"> 
+                        } 
+                    } 
+                } 
+ 
+                consecutiveBeats++</span><span class="s0">;</span><span class="s1"> 
+                currentDelay += frequencyToAdd</span><span class="s0">;</span><span class="s1"> 
+ 
+                System.out.println(</span><span class="s4">&quot;Frequency : &quot; </span><span class="s1">+ currentDelay + </span><span class="s4">&quot; - Consecutives beats : &quot; </span><span class="s1">+ consecutiveBeats + </span><span class="s4">&quot; - Consecutives extreme : &quot; </span><span class="s1">+ consecutiveExtreme)</span><span class="s0">;</span><span class="s1"> 
+            } 
+            </span><span class="s0">else </span><span class="s1">{ 
+                mediaPlayer = secondBeatPlayer</span><span class="s0">;</span><span class="s1"> 
+                delayMillis = currentDelay / </span><span class="s2">2</span><span class="s0">;</span><span class="s1"> 
+            } 
+        } 
+ 
+        mHandler.postDelayed(</span><span class="s0">new </span><span class="s1">Runnable() { 
+            @Override 
+            </span><span class="s0">public void </span><span class="s1">run() { 
+                </span><span class="s0">if </span><span class="s1">(isFinishing()) { 
+                    </span><span class="s3">// Check if the Activity is finishing.</span><span class="s1"> 
+                    </span><span class="s0">return;</span><span class="s1"> 
+                } 
+ 
+                </span><span class="s0">if </span><span class="s1">(keepPlaying) { 
+                    mediaPlayer.start()</span><span class="s0">;</span><span class="s1"> 
+                    firstBeat = !firstBeat</span><span class="s0">;</span><span class="s1"> 
+                } 
+ 
+                playMySound()</span><span class="s0">;</span><span class="s1"> 
+            } 
+        }</span><span class="s0">, </span><span class="s1">delayMillis)</span><span class="s0">;</span><span class="s1"> 
+    } 
+} 
+</span></pre>
+</body>
+</html>

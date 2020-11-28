@@ -1,6 +1,7 @@
 package com.example.so.vibrationcoeur;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +22,7 @@ public class Home extends AppCompatActivity {
     private MediaPlayer mediaPlayer;
     private MediaPlayer firstBeatPlayer;
     private MediaPlayer secondBeatPlayer;
+    private AudioManager audioManager;
 
     private boolean keepPlaying = false;
     private boolean firstBeat = true;
@@ -30,6 +32,7 @@ public class Home extends AppCompatActivity {
     private boolean wakeUpSlowly = true;
 
     private int delayMillis;
+    private double currentVolume = 0.2;
     private int currentDelay = 1000;
     private int consecutiveBeats = 0;
     private int consecutiveExtreme = 1;
@@ -53,6 +56,7 @@ public class Home extends AppCompatActivity {
                     wakeUpSlowly = true;
 
                     currentDelay = 1200;
+                    currentVolume = 0.2;
                 }
 
                 if(event.getAction() == MotionEvent.ACTION_UP){
@@ -63,12 +67,29 @@ public class Home extends AppCompatActivity {
             }
         });
 
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
         firstBeatPlayer = MediaPlayer.create(this, R.raw.beat1);
         secondBeatPlayer = MediaPlayer.create(this, R.raw.beat2);
 
         mediaPlayer = firstBeatPlayer;
 
         playMySound();
+    }
+
+    private void controlVolume(double volumeLevel) {
+        if (volumeLevel > 0.8) {
+            volumeLevel = 0.8;
+        }
+        else if (volumeLevel < 0.2) {
+            volumeLevel = 0.2;
+        }
+
+        System.out.println("Volume : " + (int) (volumeLevel*audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)));
+
+        audioManager.setStreamVolume(
+                AudioManager.STREAM_MUSIC,
+                (int) (volumeLevel*audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)), 0);
     }
 
     private void playMySound() {
@@ -93,10 +114,13 @@ public class Home extends AppCompatActivity {
                     soundBeginning = false;
                 }
                 else if (wakeUpSlowly) {
-                    System.out.println("Wake up slowly");
-                    frequencyToAdd = 160;
+                    System.out.println("Wake up slowly : " + currentDelay);
+                    frequencyToAdd = -160;
 
-                    if (currentDelay >= 960) {
+                    controlVolume(currentVolume);
+                    currentVolume += 0.3;
+
+                    if (currentDelay <= 960) {
                         wakeUpSlowly = false;
                         soundBeginning = true;
                     }
